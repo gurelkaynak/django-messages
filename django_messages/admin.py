@@ -69,6 +69,7 @@ class MessageAdmin(admin.ModelAdmin):
         When changing an existing message and choosing optional recipients,
         the message is effectively resent to those users.
         """
+        obj.owner = obj.sender 
         obj.save()
         
         if notification:
@@ -93,6 +94,7 @@ class MessageAdmin(admin.ModelAdmin):
         for user in recipients:
             obj.pk = None
             obj.recipient = user
+            obj.owner = obj.recipient
             obj.save()
 
             if notification:

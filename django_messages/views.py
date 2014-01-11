@@ -14,20 +14,30 @@ from django.conf import settings
 
 from django.db import transaction
 
-from django.views.generic.list_detail import object_list, object_detail
+#from django.views.generic.list_detail import object_list, object_detail
+from django.views.generic.list  import ListView
 
 from django_messages.models import Message
 from django_messages.forms import ComposeForm, ReplyForm
 from django_messages.utils import format_quote
 
+class MessageListView(ListView):
+    context_object_name = 'message_list'
+    extra_context = None
+    model = Message
+    request = None
+
+    def get_context_data(self, **kwargs):
+        context = super(MessageListView, self).get_context_data(**kwargs)
+        context['extra_content'] = self.extra_context
+        return context
+
 
 @login_required
 def message_list(request, queryset, paginate_by=25,
     extra_context=None, template_name=None):
-    return object_list(request, queryset=queryset, paginate_by=paginate_by,
-            extra_context=extra_context, template_name=template_name,
-            template_object_name='message')
-        
+    MessageListView.extra_context = extra_context 
+    return MessageListView.as_view(queryset=queryset, template_name=template_name, paginate_by=paginate_by)(request)
 
 @login_required
 def inbox(request, template_name='django_messages/inbox.html', **kw):

@@ -6,11 +6,9 @@ from django.db.models.query import QuerySet
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
-
 class MessageQueryset(QuerySet):
     def unread(self):
         return self.filter(unread=True)
-
 
 class BaseMessageManager(models.Manager):
     def get_query_set(self):
@@ -28,7 +26,6 @@ class BaseMessageManager(models.Manager):
         """
         pass
 
-
 class Inbox(BaseMessageManager):
     def get_query_set(self):
         return super(Inbox, self).get_query_set().filter(deleted=False)
@@ -39,7 +36,6 @@ class Inbox(BaseMessageManager):
         marked as deleted.
         """
         return self.get_query_set().filter(owner=user, recipient=user)
-
 
 class Outbox(BaseMessageManager):
     def get_query_set(self):
